@@ -600,8 +600,9 @@ class CovBot(Plugin):
         await e.respond(c, markdown=True, allow_html=True)
 
     @command.new('risks', help=HELP['risks'][1])
-    @command.argument("risks", pass_raw=True, required=True)
+    @command.argument("age", pass_raw=True, required=True)
     async def risks_handler(self, event: MessageEvent, age: int) -> None:
+        age = int(age)
         if age < 0 or age > 110:
             await self._respond(event, "Age must be between 0 and 110")
             return
