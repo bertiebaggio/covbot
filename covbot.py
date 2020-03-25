@@ -8,6 +8,7 @@ import os
 import csv
 import datetime
 import asyncio
+import math
 import whoosh
 import time
 import pycountry
@@ -34,6 +35,7 @@ COUNTRY_RENAMES = {
 
 # command: ( usage, description )
 HELP = {
+    'risks': ('!risks age', 'Show reported infection, ICU and death rate for given age.'),
     'cases': ('!cases location', 'Get up to date info on cases, optionally in a specific location. You can give a country code, country name, state, country, region or city.'),
     'source': ('!source', 'Find out about my data sources and developers.'),
     'help': ('!help', 'Get a reminder what I can do for you.'),
@@ -596,6 +598,26 @@ class CovBot(Plugin):
         c.body, c.formatted_body = parse_formatted(m, allow_html=True)
         c.format = "org.matrix.custom.html"
         await e.respond(c, markdown=True, allow_html=True)
+
+    @command.new('risks', help=HELP['risks'][1])
+    @command.argument("risks", pass_raw=True, required=True)
+    async def risks_handler(self, event: MessageEvent, age: int) -> None:
+        if age < 0 or age > 110:
+            await self._respond(event, "Age must be between 0 and 110")
+            return
+        death_rate = (0.00000297218 * age ** 2) + ((2.8118 * 10 ** -15) * age ** 7)
+        intensive_care_rate = (1 / math.pi) + -0.358209 / (1 + 0.0827213 * math.exp(0.035025 * age))
+        hospitalization_rate = age * 0.00524466
+        survival_rate = 1 - death_rate
+        pformat = lambda x: round(x * 100)
+        response = """
+        Reported infected patients having {} years old have average of {}% survial chance.
+            With hospitalization average risk of {}% , intensive care of {}%, and {}% death.
+        """.format(
+            age, pformat(survival_rate), pformat(hospitalization_rate),
+            pformat(intensive_care_rate), pformat(death_rate)
+        )
+        await self._respond(event, response)
 
     @command.new('cases', help=HELP['cases'][1])
     @command.argument("location", pass_raw=True, required=False)
