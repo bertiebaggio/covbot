@@ -605,9 +605,9 @@ class CovBot(Plugin):
         if age < 0 or age > 110:
             await self._respond(event, "Age must be between 0 and 110")
             return
-        death_rate = (0.00000297218 * age ** 2) + ((2.8118 * 10 ** -15) * age ** 7)
+        death_rate = -0.0012822 + (0.00000334593 * age ** 2) + ((2.7762 * 10 ** -15) * age ** 7)
         intensive_care_rate = (1 / math.pi) + -0.358209 / (1 + 0.0827213 * math.exp(0.035025 * age))
-        hospitalization_rate = age * 0.00524466
+        hospitalization_rate = -0.0353956 - age * -0.00576217
         survival_rate = 1 - death_rate
         pformat = lambda x: round(x * 100)
         response = """
