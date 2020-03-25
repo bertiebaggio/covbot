@@ -612,7 +612,7 @@ class CovBot(Plugin):
         pformat = lambda x: round(x * 100)
         response = """
         Reported infected patients having {} years old have average of {}% survial chance.
-            With hospitalization average risk of {}% , intensive care of {}%, and {}% death.
+            With average risk of hospitalization of {}% , intensive care of {}%, and {}% death.
         """.format(
             age, pformat(survival_rate), pformat(hospitalization_rate),
             pformat(intensive_care_rate), pformat(death_rate)
